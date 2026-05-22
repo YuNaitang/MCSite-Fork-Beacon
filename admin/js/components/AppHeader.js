@@ -36,8 +36,8 @@ const AppHeader = {
                     </template>
                 </el-dropdown>
             </div>
-            <el-dialog v-model="pwdVisible" title="修改密码" :width="store.isMobile ? '90%' : '400px'" @closed="resetPwdForm">
-                <el-form ref="pwdFormRef" :model="pwdForm" :rules="pwdRules" label-width="90px">
+            <el-dialog v-model="pwdVisible" title="修改密码" :width="store.isMobile ? '90%' : '400px'" destroy-on-close @opened="onPwdDialogOpened">
+                <el-form v-if="pwdVisible" ref="pwdFormRef" :model="pwdForm" :rules="pwdRules" label-width="90px" @submit.prevent>
                     <el-form-item label="当前密码" prop="old_password">
                         <el-input v-model="pwdForm.old_password" type="password" show-password autocomplete="off" />
                     </el-form-item>
@@ -93,6 +93,11 @@ const AppHeader = {
             pwdForm.new_password2 = ''
             pwdFormRef.value?.resetFields?.()
         }
+        function onPwdDialogOpened() {
+            // 聚焦第一个输入框
+            const firstInput = document.querySelector('#app .el-dialog .el-input__inner')
+            if (firstInput) setTimeout(() => firstInput.focus(), 100)
+        }
         async function submitPwd() {
             await pwdFormRef.value?.validate?.()
             pwdLoading.value = true
@@ -112,7 +117,7 @@ const AppHeader = {
                 window.open('/', '_blank')
                 return
             } else if (cmd === 'password') {
-                setTimeout(() => { pwdVisible.value = true }, 150)
+                Vue.nextTick(() => { pwdVisible.value = true })
                 return
             } else if (cmd === 'logout') {
                 try {
@@ -138,6 +143,7 @@ const AppHeader = {
             pwdForm,
             pwdRules,
             resetPwdForm,
+            onPwdDialogOpened,
             submitPwd,
             onCommand,
         }

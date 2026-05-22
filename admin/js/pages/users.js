@@ -97,8 +97,8 @@ const UsersPage = {
                     @change="onPageChange"
                 />
             </div>
-            <el-dialog v-model="dialogVisible" :title="editId ? '编辑用户' : '新增用户'" width="480px" @closed="resetForm">
-                <el-form ref="formRef" :model="form" :rules="rules" label-width="90px">
+            <el-dialog v-model="dialogVisible" :title="editId ? '编辑用户' : '新增用户'" width="480px" destroy-on-close @opened="onDialogOpened">
+                <el-form v-if="dialogVisible" ref="formRef" :model="form" :rules="rules" label-width="90px" @submit.prevent>
                     <el-form-item label="用户名" prop="username">
                         <el-input v-model="form.username" :disabled="!!editId" autocomplete="off" />
                     </el-form-item>
@@ -222,6 +222,9 @@ const UsersPage = {
             form.status = 1
             formRef.value?.resetFields?.()
         }
+        function onDialogOpened() {
+            formRef.value?.clearValidate?.()
+        }
         function openCreate() {
             resetForm()
             dialogVisible.value = true
@@ -327,6 +330,7 @@ const UsersPage = {
             onPageChange,
             openCreate,
             openEdit,
+            onDialogOpened,
             submit,
             remove,
             resetPwd,

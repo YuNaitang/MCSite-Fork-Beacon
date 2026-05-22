@@ -71,7 +71,7 @@ const GalleryPage = {
                 />
             </div>
 
-            <el-dialog v-model="uploadVisible" title="上传图片" width="520px" @closed="resetUpload">
+            <el-dialog v-model="uploadVisible" title="上传图片" width="520px" destroy-on-close>
                 <el-form label-width="80px">
                     <el-form-item label="分类">
                         <el-select v-model="uploadForm.category_id" clearable placeholder="未分类" style="width: 100%;">

@@ -81,7 +81,7 @@ const CommentsPage = {
                     @change="onPageChange"
                 />
             </div>
-            <el-dialog v-model="replyVisible" title="管理员回复" width="480px" @closed="replyText = ''">
+            <el-dialog v-model="replyVisible" title="管理员回复" width="480px" destroy-on-close>
                 <el-input v-model="replyText" type="textarea" rows="4" placeholder="回复内容" />
                 <template #footer>
                     <el-button @click="replyVisible = false">取消</el-button>
