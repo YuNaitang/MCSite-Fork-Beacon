@@ -50,19 +50,39 @@
   }
 
   .hero {
-    min-height: 85vh;
+    height: 100vh;
+    min-height: 500px;
     padding: 0 16px;
   }
 
   .hero-content {
     width: 100%;
     overflow: hidden;
+    padding: 0 16px;
   }
 
   .hero-title {
-    font-size: 28px;
-    letter-spacing: -0.5px;
+    font-size: 32px;
+    letter-spacing: -1px;
     word-break: break-word;
+  }
+
+  .hero-subtitle {
+    font-size: 15px;
+  }
+
+  .hero-status-bar {
+    margin-top: 28px;
+    gap: 18px;
+  }
+
+  .hero-status-bar .hero-motd {
+    font-size: 12px;
+    padding: 6px 16px;
+  }
+
+  .hero-scroll {
+    bottom: 24px;
   }
 
   .hero-motd {
@@ -190,7 +210,11 @@
 
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 24px;
+    font-size: 26px;
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
   }
 
   .hero-stats {

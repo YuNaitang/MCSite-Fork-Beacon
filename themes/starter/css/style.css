@@ -184,6 +184,34 @@ body {
   max-width: 600px;
 }
 
+/* Hero 状态栏（毛玻璃风格） */
+.hero-status-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.hero-status-bar .hero-motd {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-size: 13px;
+  padding: 8px 22px;
+}
+
+.hero-status-bar .hero-stats {
+  margin-bottom: 0;
+}
+
+.hero-status-bar .hero-address {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
 /* ==================== 滚动指示器 ==================== */
 .hero-scroll {
   position: absolute;
@@ -209,35 +237,6 @@ body {
   width: 22px;
   height: 22px;
   color: rgba(255,255,255,0.3);
-}
-
-/* ==================== Hero 信息栏（第二屏顶部） ==================== */
-.hero-info-bar {
-  --hero-text: var(--text-primary);
-  --hero-text-sub: var(--text-secondary);
-  --hero-text-muted: var(--text-muted);
-  --hero-divider: var(--border);
-  --hero-addr-bg: var(--bg-section);
-  --hero-addr-border: var(--border);
-  --hero-btn-bg: var(--text-primary);
-  --hero-btn-color: #fff;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 40px;
-  padding: 48px 0;
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.hero-info-bar .hero-motd {
-  background: #1a1a1a;
-  color: #aaaaaa;
-}
-
-.hero-info-bar .hero-stats {
-  margin-bottom: 0;
 }
 
 .hero-motd-wrap {

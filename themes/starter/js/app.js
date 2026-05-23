@@ -155,13 +155,13 @@
       }
 
       // 主题设置
-      applyThemeSettings(res.data.theme_settings || {})
+      applyThemeSettings(res.data.theme_settings || {}, res.data.content_settings || {})
     } catch (e) {
       console.error('加载站点信息失败', e)
     }
   }
 
-  function applyThemeSettings(ts) {
+  function applyThemeSettings(ts, cs = {}) {
     const root = document.documentElement
     const hero = document.querySelector('.hero')
     const heroBg = document.querySelector('.hero-bg')

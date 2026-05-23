@@ -51,7 +51,7 @@
     </div>
   </nav>
 
-  <!-- 第一屏：Hero 区（纯视觉） -->
+  <!-- 第一屏：Hero 区 -->
   <section class="hero" id="hero">
     <canvas class="hero-particles" id="hero-particles"></canvas>
     <div class="hero-bg"></div>
@@ -60,22 +60,7 @@
         <h1 class="hero-title" id="hero-title">欢迎来到服务器</h1>
         <p class="hero-subtitle" id="hero-subtitle"></p>
       </div>
-    </div>
-    <div class="hero-scroll" id="hero-scroll">
-      <span class="hero-scroll-text">探索更多</span>
-      <svg class="hero-scroll-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 5v14M5 12l7 7 7-7"/>
-      </svg>
-    </div>
-  </section>
-
-  <!-- 第二屏：服务器状态详情 -->
-  <section class="section" id="status">
-    <div class="container">
-      <h2 class="section-title fade-up" id="section-servers-title">服务器状态</h2>
-
-      <!-- Hero 信息迁移至此 -->
-      <div class="hero-info-bar fade-up">
+      <div class="hero-status-bar">
         <div class="hero-motd-wrap">
           <div class="hero-motd" id="hero-motd">&nbsp;</div>
         </div>
@@ -101,6 +86,19 @@
           <button class="copy-btn" id="copy-btn" title="复制地址"><i data-lucide="copy" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;"></i>复制</button>
         </div>
       </div>
+    </div>
+    <div class="hero-scroll" id="hero-scroll">
+      <span class="hero-scroll-text">探索更多</span>
+      <svg class="hero-scroll-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 第二屏：服务器状态详情 -->
+  <section class="section" id="status">
+    <div class="container">
+      <h2 class="section-title fade-up" id="section-servers-title">服务器状态</h2>
 
       <div class="status-grid fade-up">
         <div class="status-card">
@@ -254,7 +252,7 @@
   <script src="../shared/js/toast.js"></script>
   <script src="../shared/js/lightbox.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js?v=3"></script>
+  <script src="js/app.js?v=5"></script>
   <script>lucide.createIcons();</script>
 </body>
 </html>

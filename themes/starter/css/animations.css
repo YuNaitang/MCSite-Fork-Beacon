@@ -18,7 +18,10 @@
 /* ==================== Hero 第一屏动画 ==================== */
 
 .hero-title,
-.hero-subtitle {
+.hero-subtitle,
+.hero-status-bar .hero-motd-wrap,
+.hero-status-bar .hero-stats,
+.hero-status-bar .hero-address {
   opacity: 0;
   transform: translateY(30px);
 }
@@ -28,7 +31,19 @@
 }
 
 .hero-content.ready .hero-subtitle {
-  animation: heroFloatIn 0.8s ease 0.3s forwards;
+  animation: heroFloatIn 0.8s ease 0.2s forwards;
+}
+
+.hero-content.ready .hero-status-bar .hero-motd-wrap {
+  animation: heroFloatIn 0.7s ease 0.45s forwards;
+}
+
+.hero-content.ready .hero-status-bar .hero-stats {
+  animation: heroFloatIn 0.7s ease 0.6s forwards;
+}
+
+.hero-content.ready .hero-status-bar .hero-address {
+  animation: heroFloatIn 0.7s ease 0.75s forwards;
 }
 
 @keyframes heroFloatIn {
@@ -64,36 +79,6 @@
 @keyframes scrollBounce {
   0%, 100% { transform: translateY(0); opacity: 0.4; }
   50% { transform: translateY(6px); opacity: 0.8; }
-}
-
-/* ==================== Hero 信息栏入场（第二屏） ==================== */
-
-.hero-info-bar.fade-up .hero-motd-wrap,
-.hero-info-bar.fade-up .hero-stats,
-.hero-info-bar.fade-up .hero-address {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.hero-info-bar.fade-up.visible .hero-motd-wrap {
-  animation: heroFadeIn 0.7s ease 0.1s forwards;
-}
-.hero-info-bar.fade-up.visible .hero-stats {
-  animation: heroFadeIn 0.7s ease 0.25s forwards;
-}
-.hero-info-bar.fade-up.visible .hero-address {
-  animation: heroFadeIn 0.7s ease 0.4s forwards;
-}
-
-@keyframes heroFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ==================== 悬停效果 ==================== */

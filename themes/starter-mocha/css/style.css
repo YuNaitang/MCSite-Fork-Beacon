@@ -142,10 +142,11 @@ body {
   transition: all 0.3s;
 }
 
-/* ==================== Hero ==================== */
+/* ==================== Hero（第一屏） ==================== */
 .hero {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 600px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,99 +154,119 @@ body {
   overflow: hidden;
 }
 
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: var(--bg-main);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(203,166,247,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 60%, rgba(116,199,236,0.03) 0%, transparent 50%),
+    #1e1e2e;
   z-index: 0;
   transition: background 0.6s ease;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  max-width: 900px;
+  padding: 0 40px;
 }
 
 .hero {
   --hero-text: #cdd6f4;
   --hero-text-sub: #bac2de;
   --hero-text-muted: #6c7086;
-  --hero-divider: rgba(69, 71, 90, 0.5);
-  --hero-addr-bg: rgba(49, 50, 68, 0.85);
-  --hero-addr-border: rgba(69, 71, 90, 0.4);
+  --hero-divider: rgba(69,71,90,0.5);
+  --hero-addr-bg: rgba(49,50,68,0.85);
+  --hero-addr-border: rgba(69,71,90,0.4);
   --hero-btn-bg: #cdd6f4;
   --hero-btn-color: #1e1e2e;
 }
 
-.hero-title {
-  font-size: 56px;
-  font-weight: 800;
-  letter-spacing: -2px;
-  margin-bottom: 16px;
-  color: var(--hero-text);
-}
-
-.hero-motd-wrap {
-  margin-bottom: 40px;
-  display: flex;
-  justify-content: center;
-}
-
-.hero--dark .hero-motd {
-  background: rgba(49, 50, 68, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.hero-motd {
-  display: inline-block;
-  background: var(--surface-0);
-  color: var(--subtext-1);
-  font-family: 'JetBrains Mono', monospace;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-size: 14px;
-  letter-spacing: 0.02em;
-  padding: 10px 24px;
-  border-radius: 8px;
-  max-width: 700px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hero-stats {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 48px;
-  margin-bottom: 48px;
-}
-
-.hero-stat {
+.hero-title-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
 }
 
-.hero-stat-value {
-  font-size: 36px;
-  font-weight: 700;
+.hero-title {
+  font-size: 72px;
+  font-weight: 800;
+  letter-spacing: -3px;
+  line-height: 1.1;
   color: var(--hero-text);
+  text-shadow: 0 2px 40px rgba(0,0,0,0.4);
 }
 
-.hero-stat-label {
-  font-size: 12px;
-  color: var(--hero-text-muted);
-  margin-top: 4px;
+.hero-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--hero-text-sub);
+  letter-spacing: 0.05em;
+  max-width: 600px;
+}
+
+/* Hero 状态栏（毛玻璃风格） */
+.hero-status-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.hero-status-bar .hero-motd {
+  background: rgba(205,214,244,0.06);
+  color: rgba(205,214,244,0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(205,214,244,0.05);
+  font-size: 13px;
+  padding: 8px 22px;
+}
+
+.hero-status-bar .hero-stats {
+  margin-bottom: 0;
+}
+
+.hero-status-bar .hero-address {
+  background: rgba(205,214,244,0.05);
+  border: 1px solid rgba(205,214,244,0.08);
+}
+
+/* ==================== 滚动指示器 ==================== */
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.hero-scroll-text {
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  color: rgba(205,214,244,0.3);
 }
 
-.hero-stat-divider {
-  width: 1px;
-  height: 40px;
-  background: var(--hero-divider);
+.hero-scroll-arrow {
+  width: 22px;
+  height: 22px;
+  color: rgba(205,214,244,0.25);
 }
 
 .status-dot {

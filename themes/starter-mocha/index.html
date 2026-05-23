@@ -18,31 +18,15 @@
     try {
       var ts = JSON.parse(localStorage.getItem('mc_theme_cache') || '{}');
       var hasImg = ts.hero_image && ts.hero_image.trim();
-      var mode = hasImg ? 'image' : (ts.hero_style || '');
-      var isDark = mode === 'dark' || (mode === 'image' && ts.hero_overlay !== 'light') || mode === 'gradient';
-      var hasCache = Object.keys(ts).length > 0;
       var s = document.createElement('style');
       s.id = 'theme-preload';
-      var revealCss = '.hero-bg{opacity:0;transition:opacity 0.5s ease}.hero-bg.reveal{opacity:1}.navbar{opacity:0;transition:opacity 0.4s ease 0.15s}.navbar.reveal{opacity:1}';
-      if (!hasCache) {
-        s.textContent = '.hero{background:transparent}' + revealCss;
-        document.head.appendChild(s);
-        return;
-      }
-      var bgCss = '';
-      if (mode === 'image' && hasImg) {
+
+      var bgCss = '.hero-bg{background:#1e1e2e!important}';
+      if (hasImg) {
         var url = ts.hero_image.startsWith('http') ? ts.hero_image : '/' + ts.hero_image.replace(/^\//, '');
         bgCss = '.hero-bg{background:url("'+url+'") center/cover no-repeat!important}';
-      } else if (mode === 'dark') {
-        bgCss = '.hero-bg{background:#1e1e2e!important}';
-      } else if (mode === 'gradient') {
-        bgCss = '.hero-bg{background:linear-gradient(180deg,#181825,#1e1e2e)!important}';
       }
-      s.textContent = bgCss + revealCss;
-      if (isDark) {
-        s.textContent += '.hero{--hero-text:#cdd6f4;--hero-text-sub:#bac2de;--hero-text-muted:#6c7086;--hero-divider:rgba(69,71,90,.5);--hero-addr-bg:rgba(49,50,68,.85);--hero-addr-border:rgba(69,71,90,.4);--hero-btn-bg:#cdd6f4;--hero-btn-color:#1e1e2e}';
-        s.textContent += '.navbar:not(.scrolled) .nav-logo{color:#cdd6f4}.navbar:not(.scrolled) .nav-toggle span{background:#cdd6f4}.navbar:not(.scrolled) .nav-links a{color:rgba(205,214,244,.5)}';
-      }
+      s.textContent = bgCss + '.hero-bg{opacity:0;transition:opacity 0.5s ease}.hero-bg.reveal{opacity:1}.navbar{opacity:0;transition:opacity 0.4s ease 0.15s}.navbar.reveal{opacity:1}';
       document.head.appendChild(s);
     } catch(e){}
   })();
@@ -67,35 +51,47 @@
     </div>
   </nav>
 
-  <!-- Hero 区 -->
+  <!-- 第一屏：Hero 区 -->
   <section class="hero" id="hero">
+    <canvas class="hero-particles" id="hero-particles"></canvas>
     <div class="hero-bg"></div>
     <div class="container hero-content">
-      <h1 class="hero-title" id="hero-title">欢迎来到服务器</h1>
-      <div class="hero-motd-wrap">
-        <div class="hero-motd" id="hero-motd">&nbsp;</div>
+      <div class="hero-title-wrap">
+        <h1 class="hero-title" id="hero-title">欢迎来到服务器</h1>
+        <p class="hero-subtitle" id="hero-subtitle"></p>
       </div>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <span class="hero-stat-value" id="hero-online">-</span>
-          <span class="hero-stat-label">在线玩家</span>
+      <div class="hero-status-bar">
+        <div class="hero-motd-wrap">
+          <div class="hero-motd" id="hero-motd">&nbsp;</div>
         </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <span class="hero-stat-value" id="hero-max">-</span>
-          <span class="hero-stat-label">最大人数</span>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-value" id="hero-online">-</span>
+            <span class="hero-stat-label">在线玩家</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value" id="hero-max">-</span>
+            <span class="hero-stat-label">最大人数</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value" id="hero-status-dot"><span class="status-dot"></span></span>
+            <span class="hero-stat-label" id="hero-status-text">检测中</span>
+          </div>
         </div>
-        <div class="hero-stat-divider"></div>
-        <div class="hero-stat">
-          <span class="hero-stat-value" id="hero-status-dot"><span class="status-dot"></span></span>
-          <span class="hero-stat-label" id="hero-status-text">检测中</span>
+        <div class="hero-address">
+          <span class="address-label">服务器地址</span>
+          <code class="address-value" id="server-address">加载中...</code>
+          <button class="copy-btn" id="copy-btn" title="复制地址"><i data-lucide="copy" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;"></i>复制</button>
         </div>
       </div>
-      <div class="hero-address">
-        <span class="address-label">服务器地址</span>
-        <code class="address-value" id="server-address">加载中...</code>
-        <button class="copy-btn" id="copy-btn" title="复制地址"><i data-lucide="copy" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;"></i>复制</button>
-      </div>
+    </div>
+    <div class="hero-scroll" id="hero-scroll">
+      <span class="hero-scroll-text">探索更多</span>
+      <svg class="hero-scroll-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
     </div>
   </section>
 
@@ -255,7 +251,7 @@
   <script src="../shared/js/toast.js"></script>
   <script src="../shared/js/lightbox.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/app.js?v=3"></script>
   <script>lucide.createIcons();</script>
 </body>
 </html>

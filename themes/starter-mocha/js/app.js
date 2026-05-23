@@ -18,6 +18,7 @@
 
   async function init() {
     McApi.setBaseURL(CONFIG.API_BASE)
+    initParticles()
     initNavbar()
     await loadSiteInfo()
     loadServerStatus()
@@ -54,6 +55,11 @@
 
       const heroTitle = document.getElementById('hero-title')
       if (heroTitle) heroTitle.textContent = g('hero_title') || siteInfo.site_description || '欢迎来到服务器'
+
+      const heroSubtitle = document.getElementById('hero-subtitle')
+      if (heroSubtitle) {
+        heroSubtitle.textContent = g('hero_subtitle') || siteInfo.site_slogan || '与我们一起探索无限可能'
+      }
 
       const addr = document.getElementById('server-address')
       if (addr) addr.textContent = g('server_address_display')
@@ -147,13 +153,13 @@
       }
 
       // 主题设置
-      applyThemeSettings(res.data.theme_settings || {})
+      applyThemeSettings(res.data.theme_settings || {}, res.data.content_settings || {})
     } catch (e) {
       console.error('加载站点信息失败', e)
     }
   }
 
-  function applyThemeSettings(ts) {
+  function applyThemeSettings(ts, cs = {}) {
     const root = document.documentElement
     const hero = document.querySelector('.hero')
     const heroBg = document.querySelector('.hero-bg')
@@ -751,6 +757,14 @@
       newsPage++
       loadNews(true)
     })
+
+    // 滚动指示器 — 点击滚到第二屏
+    document.getElementById('hero-scroll')?.addEventListener('click', () => {
+      const statusSection = document.getElementById('status')
+      if (statusSection) {
+        statusSection.scrollIntoView({ behavior: 'smooth' })
+      }
+    })
   }
 
   function closePostModal() {
@@ -790,6 +804,81 @@
       html += '</div>'
       container.innerHTML = html
     } catch (e) { /* ignore */ }
+  }
+
+  // ==================== 粒子背景 ====================
+
+  function initParticles() {
+    const canvas = document.getElementById('hero-particles')
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    let particles = []
+    let animId = null
+
+    function resize() {
+      canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1)
+      canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1)
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1)
+    }
+
+    function createParticles() {
+      const count = Math.min(60, Math.floor((canvas.offsetWidth * canvas.offsetHeight) / 15000))
+      particles = []
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.offsetWidth,
+          y: Math.random() * canvas.offsetHeight,
+          r: Math.random() * 1.5 + 0.5,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.5 + 0.1,
+        })
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight)
+      particles.forEach((p) => {
+        p.x += p.vx
+        p.y += p.vy
+        if (p.x < 0) p.x = canvas.offsetWidth
+        if (p.x > canvas.offsetWidth) p.x = 0
+        if (p.y < 0) p.y = canvas.offsetHeight
+        if (p.y > canvas.offsetHeight) p.y = 0
+
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(205,214,244,${p.opacity})`
+        ctx.fill()
+      })
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x
+          const dy = particles[i].y - particles[j].y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 120) {
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.strokeStyle = `rgba(205,214,244,${0.04 * (1 - dist / 120)})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
+      }
+
+      animId = requestAnimationFrame(draw)
+    }
+
+    resize()
+    createParticles()
+    draw()
+
+    window.addEventListener('resize', () => {
+      resize()
+      createParticles()
+    })
   }
 
   // ==================== 工具 ====================
