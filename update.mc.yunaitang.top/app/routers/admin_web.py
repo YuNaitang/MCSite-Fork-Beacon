@@ -26,6 +26,199 @@ TEMPLATES_DIR = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "..", "web", "templates")
 )
 
+# ── i18n translations ────────────────────────────
+
+LANG = {
+    "en": {
+        "title": "MC Launcher Update",
+        "login_title": "MC Launcher Update",
+        "login_subtitle": "Enter admin password to continue",
+        "login_password": "Password",
+        "login_placeholder": "Enter password",
+        "login_button": "Sign In",
+        "login_error": "Incorrect password",
+        "releases": "Releases",
+        "new_release": "New Release",
+        "create_release": "Create Release",
+        "edit_release": "Edit Release",
+        "back_to_list": "Back to List",
+        "save_changes": "Save Changes",
+        "cancel": "Cancel",
+        "platform": "Platform",
+        "architecture": "Architecture",
+        "channel": "Channel",
+        "status": "Status",
+        "all": "All",
+        "all_platforms": "All platforms",
+        "all_architectures": "All architectures",
+        "active": "Active",
+        "inactive": "Inactive",
+        "filter": "Filter",
+        "clear": "Clear",
+        "version": "Version",
+        "arch": "Arch",
+        "os_range": "OS Range",
+        "build": "Build",
+        "grayscale": "Grayscale",
+        "url": "URL",
+        "actions": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "prev": "Prev",
+        "next": "Next",
+        "no_releases": 'No releases yet. Click "New Release" to create one.',
+        "records": "records",
+        "page": "page",
+        "id": "ID",
+        "all_channels": "All",
+        "created_ok": "Release created successfully.",
+        "updated_ok": "Release updated successfully.",
+        "deleted_ok": "Release deleted.",
+        "delete_confirm": "Delete version {version}? This action cannot be undone.",
+        "min_os": "Min OS Version",
+        "max_os": "Max OS Version",
+        "download_url": "Download URL",
+        "changelog": "Changelog",
+        "build_number": "Build Number",
+        "grayscale_release": "Grayscale Release",
+        "grayscale_pct": "Grayscale Percentage",
+        "nav_admin": "Admin",
+        "nav_logout": "Sign Out",
+        "footer": "MC Launcher Update Server v0.2.0",
+        "version_hint": "Semver format: X.Y.Z or X.Y.Z-beta (e.g. 1.0.0, 2.0.0-beta.1)",
+        "version_invalid": "Invalid version format. Use X.Y.Z or X.Y.Z-beta (e.g. 1.0.0, 2.0.0-beta.1)",
+        "os_min_hint": "Leave empty for no lower bound",
+        "os_max_hint": "Leave empty for no upper bound",
+        "channel_hint": "Leave empty to match all channels",
+        "platform_hint": "Leave empty to match all platforms",
+        "arch_hint": "Leave empty to match all architectures",
+        "build_hint": "For reference only, not used in version comparison",
+        "download_hint": "Link to community download page (QQ group announcement, forum post, etc.)",
+        "changelog_hint": "Markdown supported",
+        "active_hint": "When inactive, app clients will not receive this update",
+        "grayscale_hint": "Only {pct}% of users will receive this grayscale version",
+        "form_required": "Required",
+    },
+    "zh": {
+        "title": "MC Launcher Update",
+        "login_title": "MC Launcher Update",
+        "login_subtitle": "请输入管理密码",
+        "login_password": "密码",
+        "login_placeholder": "请输入密码",
+        "login_button": "登录",
+        "login_error": "密码错误",
+        "releases": "发布管理",
+        "new_release": "新建发布",
+        "create_release": "创建发布",
+        "edit_release": "编辑发布",
+        "back_to_list": "返回列表",
+        "save_changes": "保存更改",
+        "cancel": "取消",
+        "platform": "平台",
+        "architecture": "架构",
+        "channel": "渠道",
+        "status": "状态",
+        "all": "全部",
+        "all_platforms": "全部平台",
+        "all_architectures": "全部架构",
+        "active": "活跃",
+        "inactive": "停用",
+        "filter": "筛选",
+        "clear": "清除",
+        "version": "版本",
+        "arch": "架构",
+        "os_range": "OS 范围",
+        "build": "构建号",
+        "grayscale": "灰度",
+        "url": "链接",
+        "actions": "操作",
+        "edit": "编辑",
+        "delete": "删除",
+        "prev": "上一页",
+        "next": "下一页",
+        "no_releases": "暂无发布记录，点击「新建发布」创建第一个发布。",
+        "records": "条记录",
+        "page": "第",
+        "id": "ID",
+        "all_channels": "全部",
+        "created_ok": "发布已创建",
+        "updated_ok": "发布已更新",
+        "deleted_ok": "发布已删除",
+        "delete_confirm": "确定要删除版本 {version} 吗？此操作不可撤销。",
+        "min_os": "最低 OS 版本",
+        "max_os": "最高 OS 版本",
+        "download_url": "下载地址",
+        "changelog": "更新日志",
+        "build_number": "构建号",
+        "grayscale_release": "灰度发布",
+        "grayscale_pct": "灰度比例",
+        "nav_admin": "管理员",
+        "nav_logout": "登出",
+        "footer": "MC Launcher Update Server v0.2.0",
+        "version_hint": "版本号格式：X.Y.Z 或 X.Y.Z-beta （如 1.0.0、2.0.0-beta.1）",
+        "version_invalid": "无效的版本号格式，请使用 X.Y.Z 或 X.Y.Z-beta 格式（如 1.0.0、2.0.0-beta.1）",
+        "os_min_hint": "留空 = 无下限",
+        "os_max_hint": "留空 = 无上限",
+        "channel_hint": "留空 = 匹配所有渠道",
+        "platform_hint": "留空 = 匹配所有平台",
+        "arch_hint": "留空 = 匹配所有架构",
+        "build_hint": "仅参考，不参与版本比对",
+        "download_hint": "指向社群下载页面（QQ 群公告、论坛帖子等）",
+        "changelog_hint": "支持 Markdown 格式",
+        "active_hint": "停用后 app 端不会收到此版本的更新提醒",
+        "grayscale_hint": "仅有 {pct}% 的用户会收到此灰度版本",
+        "form_required": "必填",
+    },
+}
+
+
+def _t(lang: str, key: str, **fmt) -> str:
+    """Look up translation for key in given language, with optional formatting."""
+    text = LANG.get(lang, LANG["en"]).get(key, LANG["en"].get(key, key))
+    if fmt:
+        text = text.format(**fmt)
+    return text
+
+
+def _lang(request: Request) -> str:
+    """Extract language from query params or session, default 'zh'."""
+    qp = request.query_params.get("lang", "")
+    if qp in ("zh", "en"):
+        return qp
+    session_lang = request.session.get("lang", "")
+    if session_lang in ("zh", "en"):
+        return session_lang
+    return "zh"
+
+
+def _render_with_i18n(
+    request: Request, template_name: str, **context
+) -> HTMLResponse:
+    """Render a Jinja2 template with lang and translation helper injected."""
+    if _jinja_env is None:
+        return HTMLResponse(
+            "<h1>Template engine not available</h1>", status_code=500
+        )
+    lang = _lang(request)
+    context.setdefault("request", request)
+    context.setdefault("lang", lang)
+    context.setdefault("_", lambda key, **fmt: _t(lang, key, **fmt))
+
+    # Build toggle URL: same path, swap lang
+    toggle_lang = "zh" if lang == "en" else "en"
+    toggle_params = dict(request.query_params)
+    toggle_params["lang"] = toggle_lang
+    from urllib.parse import urlencode
+
+    toggle_qs = urlencode(toggle_params)
+    toggle_url = request.url.path + ("?" + toggle_qs if toggle_qs else "")
+    context.setdefault("toggle_lang", toggle_lang)
+    context.setdefault("toggle_url", toggle_url)
+
+    template = _jinja_env.get_template(template_name)
+    return HTMLResponse(template.render(**context))
+
+
 # ── Template helper ──────────────────────────────
 
 try:
@@ -42,14 +235,8 @@ except Exception:
 def _render(
     request: Request, template_name: str, **context
 ) -> HTMLResponse:
-    """Render a Jinja2 template to an HTML response."""
-    if _jinja_env is None:
-        return HTMLResponse(
-            "<h1>Template engine not available</h1>", status_code=500
-        )
-    context.setdefault("request", request)
-    template = _jinja_env.get_template(template_name)
-    return HTMLResponse(template.render(**context))
+    """Render a Jinja2 template to an HTML response (backward-compat, calls _render_with_i18n)."""
+    return _render_with_i18n(request, template_name, **context)
 
 
 # ── Auth helpers ─────────────────────────────────
@@ -60,8 +247,8 @@ def _require_login(request: Request) -> Optional[str]:
     return request.session.get("admin_authenticated")
 
 
-def _login_redirect():
-    return RedirectResponse(url="/admin/login", status_code=302)
+def _login_redirect(lang: str = "zh"):
+    return RedirectResponse(url=f"/admin/login?lang={lang}", status_code=302)
 
 
 # ── Auth routes ──────────────────────────────────
@@ -71,7 +258,10 @@ def _login_redirect():
 async def login_page(request: Request):
     """Show the login form."""
     error = request.query_params.get("error", "")
-    return _render(request, "login.html.j2", error=error)
+    lang = _lang(request)
+    if error:
+        error = "login_error"
+    return _render(request, "login.html.j2", error=error if error else "")
 
 
 @router.post("/login")
@@ -80,27 +270,31 @@ async def login_action(
     password: str = Form(...),
 ):
     """Process login form submission."""
+    lang = _lang(request)
     if password == settings.admin_password:
         request.session["admin_authenticated"] = True
-        return RedirectResponse(url="/admin/releases", status_code=302)
+        request.session["lang"] = lang
+        return RedirectResponse(url=f"/admin/releases?lang={lang}", status_code=302)
 
-    return RedirectResponse(url="/admin/login?error=密码错误", status_code=302)
+    return RedirectResponse(url=f"/admin/login?error=login_error&lang={lang}", status_code=302)
 
 
 @router.get("/logout")
 async def logout(request: Request):
     """Clear session and redirect to login."""
     request.session.clear()
-    return _login_redirect()
+    lang = _lang(request)
+    return RedirectResponse(url=f"/admin/login?lang={lang}", status_code=302)
 
 
 # ── Release management pages ─────────────────────
 
 
 @router.get("/", response_class=HTMLResponse)
-async def admin_index():
+async def admin_index(request: Request):
     """Redirect to releases list."""
-    return RedirectResponse(url="/admin/releases", status_code=302)
+    lang = _lang(request)
+    return RedirectResponse(url=f"/admin/releases?lang={lang}", status_code=302)
 
 
 @router.get("/releases", response_class=HTMLResponse)
@@ -114,7 +308,7 @@ async def release_list_page(
 ):
     """Show the paginated release list."""
     if not _require_login(request):
-        return _login_redirect()
+        return _login_redirect(_lang(request))
 
     # Parse filter values
     active_filter: bool | None = None
@@ -152,7 +346,7 @@ async def release_list_page(
 async def release_new_page(request: Request):
     """Show the create release form."""
     if not _require_login(request):
-        return _login_redirect()
+        return _login_redirect(_lang(request))
 
     return _render(
         request,
@@ -172,7 +366,7 @@ async def release_edit_page(
 ):
     """Show the edit release form."""
     if not _require_login(request):
-        return _login_redirect()
+        return _login_redirect(_lang(request))
 
     release = await get_release_by_id(db, release_id)
     if release is None:
@@ -207,11 +401,12 @@ async def release_create_action(
 ):
     """Handle create release form submission."""
     if not _require_login(request):
-        return _login_redirect()
+        return _login_redirect(_lang(request))
 
     try:
         parse_semver(version)
     except ValueError:
+        lang = _lang(request)
         return _render(
             request,
             "edit.html.j2",
@@ -219,7 +414,7 @@ async def release_create_action(
             platforms=Platform,
             archs=Architecture,
             is_new=True,
-            error="无效的版本号格式，请使用 X.Y.Z 格式（如 1.0.0）",
+            error=_t(lang, "version_invalid"),
         )
 
     gs = is_grayscale == "1"
@@ -238,7 +433,8 @@ async def release_create_action(
         download_url=download_url if download_url else None,
         changelog=changelog if changelog else None,
     )
-    return RedirectResponse(url="/admin/releases?created=1", status_code=302)
+    lang = _lang(request)
+    return RedirectResponse(url=f"/admin/releases?created=1&lang={lang}", status_code=302)
 
 
 @router.post("/releases/{release_id}/edit", response_class=HTMLResponse)
@@ -261,7 +457,7 @@ async def release_update_action(
 ):
     """Handle edit release form submission."""
     if not _require_login(request):
-        return _login_redirect()
+        return _login_redirect(_lang(request))
 
     release = await get_release_by_id(db, release_id)
     if release is None:
@@ -270,6 +466,7 @@ async def release_update_action(
     try:
         parse_semver(version)
     except ValueError:
+        lang = _lang(request)
         return _render(
             request,
             "edit.html.j2",
@@ -277,7 +474,7 @@ async def release_update_action(
             platforms=Platform,
             archs=Architecture,
             is_new=False,
-            error="无效的版本号格式，请使用 X.Y.Z 格式（如 1.0.0）",
+            error=_t(lang, "version_invalid"),
         )
 
     gs = is_grayscale == "1"
@@ -297,7 +494,8 @@ async def release_update_action(
         download_url=download_url if download_url else None,
         changelog=changelog if changelog else None,
     )
-    return RedirectResponse(url="/admin/releases?updated=1", status_code=302)
+    lang = _lang(request)
+    return RedirectResponse(url=f"/admin/releases?updated=1&lang={lang}", status_code=302)
 
 
 @router.post("/releases/{release_id}/delete")
@@ -308,7 +506,8 @@ async def release_delete_action(
 ):
     """Handle delete release form submission."""
     if not _require_login(request):
-        return _login_redirect()
+        return _login_redirect(_lang(request))
 
     await delete_release(db, release_id)
-    return RedirectResponse(url="/admin/releases?deleted=1", status_code=302)
+    lang = _lang(request)
+    return RedirectResponse(url=f"/admin/releases?deleted=1&lang={lang}", status_code=302)

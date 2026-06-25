@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ lang }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1e1e2e">
-    <title>{% block title %}MC Launcher Update{% endblock %}</title>
+    <title>{% block title %}{{ _('title') }}{% endblock %}</title>
     <link rel="stylesheet" href="/admin/static/fonts.css">
     <link rel="stylesheet" href="/admin/static/style.css">
     {% block head %}{% endblock %}
@@ -13,10 +13,13 @@
     {% if request.session.get("admin_authenticated") %}
     <nav class="top-nav" id="top-nav">
         <div class="nav-inner">
-            <a href="/admin/releases" class="nav-brand">MC Launcher Update</a>
+            <a href="/admin/releases?lang={{ lang }}" class="nav-brand">{{ _('title') }}</a>
             <div class="nav-actions">
-                <span class="nav-user">Admin</span>
-                <a href="/admin/logout" class="nav-link">Sign Out</a>
+                <a href="{{ toggle_url }}" class="lang-toggle" title="{{ 'Switch to English' if toggle_lang == 'en' else '切换到中文' }}">
+                    {{ 'EN' if toggle_lang == 'en' else '中文' }}
+                </a>
+                <span class="nav-user">{{ _('nav_admin') }}</span>
+                <a href="/admin/logout?lang={{ lang }}" class="nav-link">{{ _('nav_logout') }}</a>
             </div>
         </div>
     </nav>
@@ -27,7 +30,7 @@
     </main>
 
     <footer class="footer">
-        <p>MC Launcher Update Server v0.1.0</p>
+        <p>{{ _('footer') }}</p>
     </footer>
 
     <script>

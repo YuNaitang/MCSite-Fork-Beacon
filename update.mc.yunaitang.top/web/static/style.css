@@ -158,6 +158,21 @@ body {
   font-size: 14px;
 }
 
+.lang-toggle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.lang-toggle:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
 .nav-link {
   font-size: 14px;
   font-weight: 500;

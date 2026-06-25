@@ -6,7 +6,7 @@ class Settings(BaseSettings):
 
     # Server
     app_host: str = "0.0.0.0"
-    app_port: int = 8000
+    app_port: int = 3100
     app_debug: bool = False
 
     # Database
