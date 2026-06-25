@@ -58,19 +58,23 @@ LOG_LEVEL=INFO
 ## 4. 安装 systemd 服务
 
 ```bash
-# 复制服务文件
+# 1. 确认 uv 路径
+which uv
+# 如果是 /root/.cargo/bin/uv，修改 service 文件中的路径
+# 或者创建软链接: ln -s /root/.cargo/bin/uv /usr/local/bin/uv
+
+# 2. 复制服务文件
 sudo cp deploy/mcsite-update.service /etc/systemd/system/
 
-# 重载 systemd
+# 3. 确保 .env 文件存在
+test -f /var/www/MCSite-Update/.env || cp /var/www/MCSite-Update/.env.example /var/www/MCSite-Update/.env
+
+# 4. 重载 & 启动
 sudo systemctl daemon-reload
-
-# 启动 & 设置开机自启
 sudo systemctl enable --now mcsite-update
-
-# 检查状态
 sudo systemctl status mcsite-update
 
-# 查看日志
+# 5. 查看日志
 sudo journalctl -u mcsite-update -f
 ```
 
