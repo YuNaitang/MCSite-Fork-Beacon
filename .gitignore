@@ -4,6 +4,7 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+.pytest_cache/
 
 # Virtual environment
 .venv/
@@ -14,7 +15,8 @@ venv/
 /site/config.php
 
 # Database
-data/*.db
+api/data/*.db
+site/data/*.db
 
 # IDE
 .vscode/
@@ -27,3 +29,16 @@ Thumbs.db
 # Coverage
 htmlcov/
 .coverage
+
+# PHP runtime cache
+site/cache/*.json
+site/cache/backups/
+site/cache/theme_downloads/
+site/cache/updates/
+
+# User uploads (generated content, not source)
+site/uploads/
+
+# Archives
+*.tar.gz
+*.zip
