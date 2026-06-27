@@ -1,0 +1,42 @@
+{% extends "base.html.j2" %}
+{% block title %}{{ _('login_title') }}{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <h1>{{ _('login_title') }}</h1>
+        <p class="login-subtitle">{{ _('login_subtitle') }}</p>
+
+        {% if error %}
+        <div class="alert alert-error">{{ _(error) }}</div>
+        {% endif %}
+
+        <form method="POST" action="/admin/login?lang={{ lang }}" class="login-form">
+            <div class="form-group">
+                <label for="username">{{ _('login_username') }}</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="form-input"
+                    placeholder="{{ _('login_username_placeholder') }}"
+                    required
+                    autofocus
+                />
+            </div>
+            <div class="form-group">
+                <label for="password">{{ _('login_password') }}</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-input"
+                    placeholder="{{ _('login_placeholder') }}"
+                    required
+                />
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">{{ _('login_button') }}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

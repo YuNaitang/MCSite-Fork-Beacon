@@ -1,0 +1,160 @@
+{% extends "base.html.j2" %}
+{% block title %}{{ _('releases') }} - {{ _('title') }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ _('releases') }}</h1>
+    <a href="/admin/releases/new?lang={{ lang }}" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        {{ _('new_release') }}
+    </a>
+</div>
+
+{% if request.query_params.get("created") %}
+<div class="alert alert-success">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    {{ _('created_ok') }}
+</div>
+{% endif %}
+{% if request.query_params.get("updated") %}
+<div class="alert alert-success">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    {{ _('updated_ok') }}
+</div>
+{% endif %}
+{% if request.query_params.get("deleted") %}
+<div class="alert alert-success">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+    {{ _('deleted_ok') }}
+</div>
+{% endif %}
+
+{# Filters #}
+<form class="filter-bar" method="GET" action="/admin/releases">
+    <input type="hidden" name="lang" value="{{ lang }}">
+    <div class="filter-row">
+        <div class="filter-item">
+            <label for="f-platform">{{ _('platform') }}</label>
+            <select id="f-platform" name="platform" class="form-select">
+                <option value="">{{ _('all') }}</option>
+                {% for p in platforms %}
+                <option value="{{ p.value }}" {% if platform == p.value %}selected{% endif %}>{{ p.value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-item">
+            <label for="f-channel">{{ _('channel') }}</label>
+            <input type="text" id="f-channel" name="channel" value="{{ channel }}" class="form-input" placeholder="official" />
+        </div>
+        <div class="filter-item">
+            <label for="f-status">{{ _('status') }}</label>
+            <select id="f-status" name="is_active" class="form-select">
+                <option value="">{{ _('all') }}</option>
+                <option value="active" {% if is_active == "active" %}selected{% endif %}>{{ _('active') }}</option>
+                <option value="inactive" {% if is_active == "inactive" %}selected{% endif %}>{{ _('inactive') }}</option>
+            </select>
+        </div>
+        <div class="filter-item filter-actions">
+            <button type="submit" class="btn btn-secondary">{{ _('filter') }}</button>
+            <a href="/admin/releases?lang={{ lang }}" class="btn btn-link">{{ _('clear') }}</a>
+        </div>
+    </div>
+</form>
+
+{# Table #}
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>{{ _('id') }}</th>
+                <th>{{ _('version') }}</th>
+                <th>{{ _('platform') }}</th>
+                <th>{{ _('arch') }}</th>
+                <th>{{ _('os_range') }}</th>
+                <th>{{ _('channel') }}</th>
+                <th>{{ _('build') }}</th>
+                <th>{{ _('status') }}</th>
+                <th>{{ _('grayscale') }}</th>
+                <th>{{ _('url') }}</th>
+                <th>{{ _('actions') }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if releases %}
+            {% for r in releases %}
+            <tr class="{% if not r.is_active %}row-inactive{% endif %}">
+                <td>{{ r.id }}</td>
+                <td class="version-cell">{{ r.version }}</td>
+                <td>{{ r.platform or "-" }}</td>
+                <td>{{ r.arch or "-" }}</td>
+                <td>
+                    {% if r.os_version_min or r.os_version_max %}
+                        {{ r.os_version_min or "any" }} ~ {{ r.os_version_max or "any" }}
+                    {% else %}-{% endif %}
+                </td>
+                <td>{{ r.channel or "-" }}</td>
+                <td>{{ r.build_number or "-" }}</td>
+                <td>
+                    {% if r.is_active %}
+                    <span class="badge badge-active">{{ _('active') }}</span>
+                    {% else %}
+                    <span class="badge badge-inactive">{{ _('inactive') }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if r.is_grayscale %}
+                    <span class="badge badge-grayscale">{{ r.grayscale_pct }}%</span>
+                    {% else %}-{% endif %}
+                </td>
+                <td class="url-cell">
+                    {% if r.download_url %}
+                    <a href="{{ r.download_url }}" target="_blank" rel="noopener" title="{{ r.download_url }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    </a>
+                    {% else %}-{% endif %}
+                </td>
+                <td class="actions-cell">
+                    <a href="/admin/releases/{{ r.id }}/edit?lang={{ lang }}" class="btn btn-sm btn-outline">{{ _('edit') }}</a>
+                    <form method="POST" action="/admin/releases/{{ r.id }}/delete?lang={{ lang }}"
+                          class="inline-form"
+                          onsubmit="return confirm('{{ _('delete_confirm', version=r.version) }}')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" class="btn btn-sm btn-danger">{{ _('delete') }}</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="11" class="empty-row">{{ _('no_releases') }}</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{# Pagination #}
+{% if total_pages > 1 %}
+<div class="pagination">
+    <span class="page-info">{{ total }} {{ _('records') }}, {{ _('page') }} {{ page }}/{{ total_pages }}</span>
+    <div class="page-links">
+        {% if page > 1 %}
+        <a href="/admin/releases?page={{ page - 1 }}&platform={{ platform }}&channel={{ channel }}&is_active={{ is_active }}&lang={{ lang }}" class="btn btn-sm btn-outline">{{ _('prev') }}</a>
+        {% endif %}
+
+        {% set start = [page - 2, 1] | max %}
+        {% set end = [page + 2, total_pages] | min %}
+        {% for p in range(start, end + 1) %}
+        <a href="/admin/releases?page={{ p }}&platform={{ platform }}&channel={{ channel }}&is_active={{ is_active }}&lang={{ lang }}"
+           class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-outline{% endif %}">
+            {{ p }}
+        </a>
+        {% endfor %}
+
+        {% if page < total_pages %}
+        <a href="/admin/releases?page={{ page + 1 }}&platform={{ platform }}&channel={{ channel }}&is_active={{ is_active }}&lang={{ lang }}" class="btn btn-sm btn-outline">{{ _('next') }}</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
