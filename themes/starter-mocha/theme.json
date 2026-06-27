@@ -1,0 +1,64 @@
+{
+  "name": "Starter_Mocha",
+  "description": "Starter 主题的 Catppuccin Mocha 深色变体 — 极简黑白 × 柔和夜间配色",
+  "version": "1.0.0",
+  "settings": [
+    {
+      "key": "hero_style",
+      "label": "Hero 背景风格",
+      "type": "select",
+      "options": [
+        { "label": "纯色背景", "value": "light" },
+        { "label": "浅灰渐变", "value": "gradient" },
+        { "label": "深色", "value": "dark" },
+        { "label": "自定义图片", "value": "image" }
+      ],
+      "default": "dark"
+    },
+    {
+      "key": "hero_image",
+      "label": "Hero 背景图片",
+      "type": "image",
+      "placeholder": "选择或上传背景图片（建议 1920x1080 以上）",
+      "default": "",
+      "show_when": { "key": "hero_style", "value": "image" }
+    },
+    {
+      "key": "hero_overlay",
+      "label": "背景图片遮罩",
+      "type": "select",
+      "options": [
+        { "label": "深色遮罩", "value": "dark" },
+        { "label": "浅色遮罩", "value": "light" },
+        { "label": "无遮罩", "value": "none" }
+      ],
+      "default": "dark",
+      "show_when": { "key": "hero_style", "value": "image" }
+    },
+    {
+      "key": "card_radius",
+      "label": "卡片圆角",
+      "type": "select",
+      "options": [
+        { "label": "圆润 (14px)", "value": "14" },
+        { "label": "适中 (8px)", "value": "8" },
+        { "label": "直角 (2px)", "value": "2" }
+      ],
+      "default": "14"
+    },
+    {
+      "key": "favicon_url",
+      "label": "Favicon URL",
+      "type": "input",
+      "placeholder": "浏览器标签图标地址",
+      "default": ""
+    },
+    {
+      "key": "custom_css",
+      "label": "自定义 CSS",
+      "type": "textarea",
+      "placeholder": "在此输入自定义样式，会注入到页面 <head> 中",
+      "default": ""
+    }
+  ]
+}

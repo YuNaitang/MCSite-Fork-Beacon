@@ -1,0 +1,46 @@
+# ============================================================
+# Minecraft Server Site - Apache 伪静态规则
+# 将此文件放在站点根目录，确保已启用 mod_rewrite
+# ============================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # 禁止访问隐藏文件、config.php 和核心/缓存目录
+    RewriteRule ^(\.|config\.php|core/|cache/) - [F,L]
+
+    # API 路由
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^api/ api/index.php [L,QSA]
+
+    # 后台 API 路由
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^admin/api/ admin/api/index.php [L,QSA]
+
+    # 后台面板 SPA 回退
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^admin/ admin/index.html [L]
+
+    # 安装向导直接访问
+    RewriteRule ^install\.php$ - [L]
+
+    # 默认走前端入口
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php [L,QSA]
+</IfModule>
+
+# 静态资源缓存
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 7 days"
+    ExpiresByType image/png "access plus 7 days"
+    ExpiresByType image/gif "access plus 7 days"
+    ExpiresByType image/webp "access plus 7 days"
+    ExpiresByType image/svg+xml "access plus 7 days"
+    ExpiresByType text/css "access plus 7 days"
+    ExpiresByType application/javascript "access plus 7 days"
+    ExpiresByType font/woff2 "access plus 30 days"
+</IfModule>

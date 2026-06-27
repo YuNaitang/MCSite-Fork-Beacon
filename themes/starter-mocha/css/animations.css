@@ -1,0 +1,136 @@
+/* Starter_Mocha — 动画系统 (Catppuccin Mocha) */
+
+/* ==================== 滚动入场动画 ==================== */
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-up:nth-child(2) { transition-delay: 0.1s; }
+.fade-up:nth-child(3) { transition-delay: 0.2s; }
+.fade-up:nth-child(4) { transition-delay: 0.3s; }
+
+/* ==================== Hero 第一屏动画 ==================== */
+
+.hero-title,
+.hero-subtitle,
+.hero-status-bar .hero-motd-wrap,
+.hero-status-bar .hero-stats,
+.hero-status-bar .hero-address {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.hero-content.ready .hero-title {
+  animation: heroFloatIn 1s ease forwards, heroFloat 6s ease-in-out 1.2s infinite;
+}
+
+.hero-content.ready .hero-subtitle {
+  animation: heroFloatIn 0.8s ease 0.2s forwards;
+}
+
+.hero-content.ready .hero-status-bar .hero-motd-wrap {
+  animation: heroFloatIn 0.7s ease 0.45s forwards;
+}
+
+.hero-content.ready .hero-status-bar .hero-stats {
+  animation: heroFloatIn 0.7s ease 0.6s forwards;
+}
+
+.hero-content.ready .hero-status-bar .hero-address {
+  animation: heroFloatIn 0.7s ease 0.75s forwards;
+}
+
+@keyframes heroFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* 滚动指示器动画 */
+.hero-scroll {
+  opacity: 0;
+  animation: scrollFadeIn 0.8s ease 1.5s forwards;
+}
+
+@keyframes scrollFadeIn {
+  to { opacity: 1; }
+}
+
+.hero-scroll-arrow {
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(6px); opacity: 0.8; }
+}
+
+/* ==================== 悬停效果 ==================== */
+
+.gallery-item {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.news-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.news-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.status-card {
+  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.status-card:hover {
+  background: var(--surface-0);
+}
+
+/* ==================== 导航动画 ==================== */
+
+.nav-toggle.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.nav-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ==================== 脉冲动画（状态指示） ==================== */
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+.status-dot {
+  animation: pulse 2s ease-in-out infinite;
+}
