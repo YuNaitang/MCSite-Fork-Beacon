@@ -190,83 +190,67 @@ body {
   --hero-btn-color: #1e1e2e;
 }
 
-.hero-title-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.hero-title {
-  font-size: 72px;
-  font-weight: 800;
-  letter-spacing: -3px;
-  line-height: 1.1;
-  color: var(--hero-text);
-  text-shadow: 0 2px 40px rgba(0,0,0,0.4);
-}
-
-.hero-subtitle {
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--hero-text-sub);
-  letter-spacing: 0.05em;
-  max-width: 600px;
-}
-
-/* Hero 状态栏（毛玻璃风格） */
-.hero-status-bar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
+/* Hero 状态区 */
+.hero-motd-wrap {
   margin-top: 40px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
 }
 
-.hero-status-bar .hero-motd {
+.hero-motd {
+  display: inline-block;
   background: rgba(205,214,244,0.06);
   color: rgba(205,214,244,0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(205,214,244,0.05);
-  font-size: 13px;
-  padding: 8px 22px;
+  font-family: 'JetBrains Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  padding: 10px 24px;
+  border-radius: 8px;
+  max-width: 700px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.hero-status-bar .hero-stats {
-  margin-bottom: 0;
+.hero-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 40px;
+  margin-bottom: 40px;
 }
 
-.hero-status-bar .hero-address {
-  background: rgba(205,214,244,0.05);
-  border: 1px solid rgba(205,214,244,0.08);
-}
-
-/* ==================== 滚动指示器 ==================== */
-.hero-scroll {
-  position: absolute;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
+.hero-stat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  cursor: pointer;
 }
 
-.hero-scroll-text {
-  font-size: 11px;
-  letter-spacing: 0.12em;
+.hero-stat-value {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--hero-text);
+}
+
+.hero-stat-label {
+  font-size: 12px;
+  color: var(--hero-text-muted);
+  margin-top: 4px;
   text-transform: uppercase;
-  color: rgba(205,214,244,0.3);
+  letter-spacing: 0.08em;
 }
 
-.hero-scroll-arrow {
-  width: 22px;
-  height: 22px;
-  color: rgba(205,214,244,0.25);
+.hero-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--hero-divider);
 }
 
 .status-dot {

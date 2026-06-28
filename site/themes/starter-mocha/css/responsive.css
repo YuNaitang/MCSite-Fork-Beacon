@@ -71,14 +71,10 @@
     font-size: 15px;
   }
 
-  .hero-status-bar {
+  .hero-motd-wrap {
     margin-top: 28px;
-    gap: 18px;
-  }
-
-  .hero-status-bar .hero-motd {
-    font-size: 12px;
-    padding: 6px 16px;
+    margin-bottom: 28px;
+    padding: 0 4px;
   }
 
   .hero-scroll {
@@ -218,12 +214,19 @@
   }
 
   .hero-stats {
-    flex-direction: column;
-    gap: 12px;
+    gap: 0;
+    justify-content: center;
+  }
+
+  .hero-stat {
+    padding: 0 12px;
   }
 
   .hero-stat-divider {
-    display: none;
+    width: 1px;
+    height: 32px;
+    background: var(--hero-divider);
+    display: block;
   }
 
   .hero-stat-value {
