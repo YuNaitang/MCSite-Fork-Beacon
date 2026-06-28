@@ -159,7 +159,16 @@ if ($method === 'POST' && $path === '') {
     }
     $isPinned = (int) (bool) Request::post('is_pinned', false);
     $now = date('Y-m-d H:i:s');
-    $publishedAt = $status === 'published' ? $now : null;
+    // 支持自定义发布时间
+    $publishedAtRaw = Request::post('published_at');
+    $publishedAt = null;
+    if ($status === 'published') {
+        if ($publishedAtRaw && preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $publishedAtRaw)) {
+            $publishedAt = $publishedAtRaw;
+        } else {
+            $publishedAt = $now;
+        }
+    }
     $id = DB::insert('posts', [
         'category_id'  => $categoryId,
         'user_id'      => (int) $user['id'],
@@ -224,8 +233,22 @@ if ($method === 'PUT' && preg_match('#^(\d+)$#', $path, $m)) {
             Response::error('状态不合法', 422);
         }
         $data['status'] = $st;
-        if ($st === 'published' && empty($row['published_at'])) {
-            $data['published_at'] = date('Y-m-d H:i:s');
+        if ($st === 'published') {
+            // 如果传了自定义发布时间则使用，否则沿用旧的
+            if (!empty($body['published_at']) && preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $body['published_at'])) {
+                $data['published_at'] = $body['published_at'];
+            } elseif (empty($row['published_at'])) {
+                $data['published_at'] = date('Y-m-d H:i:s');
+            }
+        }
+    }
+    // 单独修改发布时间（不依赖 status 变更）
+    if (array_key_exists('published_at', $body)) {
+        $pa = $body['published_at'];
+        if ($pa && preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $pa)) {
+            $data['published_at'] = $pa;
+        } elseif (empty($pa)) {
+            $data['published_at'] = null;
         }
     }
     if (array_key_exists('is_pinned', $body)) {

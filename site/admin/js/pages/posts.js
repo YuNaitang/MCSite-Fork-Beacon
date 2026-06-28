@@ -38,7 +38,14 @@ const PostsPage = {
                     <el-table-column label="置顶" width="70">
                         <template #default="{ row }">{{ row.is_pinned ? '是' : '否' }}</template>
                     </el-table-column>
-                    <el-table-column prop="published_at" label="发布时间" width="170" />
+                    <el-table-column label="发布" width="170">
+                        <template #default="{ row }">{{ row.published_at || '未发布' }}</template>
+                    </el-table-column>
+                    <el-table-column label="修改" width="170">
+                        <template #default="{ row }">
+                            <span style="color:var(--text-muted);font-size:12px;">{{ row.updated_at || '—' }}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作" width="140" fixed="right">
                         <template #default="{ row }">
                             <el-button type="primary" link @click="goEdit(row)">编辑</el-button>

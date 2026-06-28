@@ -30,6 +30,15 @@ const PostEditPage = {
                             <el-radio label="published">发布</el-radio>
                         </el-radio-group>
                     </el-form-item>
+                    <el-form-item label="发布时间">
+                        <el-date-picker v-model="form.published_at" type="datetime"
+                            format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss"
+                            placeholder="留空则自动设为当前时间" style="width: 100%;"
+                            :disabled="form.status !== 'published'" />
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">
+                            仅后台可见的实际修改时间：<code>{{ form._updated_at || '—' }}</code>
+                        </div>
+                    </el-form-item>
                     <el-form-item label="置顶">
                         <el-switch v-model="form.is_pinned" />
                     </el-form-item>
@@ -64,6 +73,8 @@ const PostEditPage = {
             category_id: null,
             cover_image: '',
             status: 'published',
+            published_at: '',
+            _updated_at: '',
             is_pinned: false,
             content: '',
         })
@@ -88,6 +99,8 @@ const PostEditPage = {
                 form.category_id = d.category_id
                 form.cover_image = d.cover_image || ''
                 form.status = d.status || 'published'
+                form.published_at = d.published_at || ''
+                form._updated_at = d.updated_at || ''
                 form.is_pinned = !!d.is_pinned
                 form.content = d.content || ''
             } finally {
@@ -104,6 +117,8 @@ const PostEditPage = {
                 form.category_id = null
                 form.cover_image = ''
                 form.status = 'published'
+                form.published_at = ''
+                form._updated_at = ''
                 form.is_pinned = false
                 form.content = ''
             }
@@ -122,6 +137,7 @@ const PostEditPage = {
                     category_id: form.category_id,
                     cover_image: form.cover_image || null,
                     status: form.status,
+                    published_at: form.published_at || null,
                     is_pinned: form.is_pinned ? 1 : 0,
                     content: form.content,
                 }
