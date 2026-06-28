@@ -1,59 +1,137 @@
 <?php
+/**
+ * Git 仓库更新引擎
+ * 从 GitHub 拉取最新代码并应用到 site/ 目录。
+ * 自动保护本地配置文件（config.php、uploads/、cache/）。
+ */
 
 class Updater
 {
-    private static string $cacheDir = '';
+    const REPO   = 'YuNaitang/MCSite-Update';
+    const BRANCH = 'master';
+
+    private static string $cacheDir  = '';
     private static string $backupDir = '';
+
+    /**
+     * 受保护路径 — 更新时不会覆盖
+     */
+    private static array $protectedPaths = [
+        'config.php',
+        '.env',
+        'uploads',
+        'cache',
+    ];
 
     private static function dirs(): void
     {
-        self::$cacheDir = ROOT_PATH . '/cache/updates';
+        self::$cacheDir  = ROOT_PATH . '/cache/updates';
         self::$backupDir = ROOT_PATH . '/cache/backups';
-        if (!is_dir(self::$cacheDir)) @mkdir(self::$cacheDir, 0755, true);
+        if (!is_dir(self::$cacheDir))  @mkdir(self::$cacheDir, 0755, true);
         if (!is_dir(self::$backupDir)) @mkdir(self::$backupDir, 0755, true);
     }
 
+    // ──────────────────────────────────────────────
+    //  检查更新
+    // ──────────────────────────────────────────────
+
     /**
-     * 向更新服务器检查新版本
+     * 从 GitHub 检查是否有新版本。
+     * 通过对比远程 Version.php 中的 CURRENT 常量判断。
      */
     static function check(): array
     {
-        $url = Version::UPDATE_SERVER . '/index.php?path=api/releases/latest&version=' . urlencode(Version::CURRENT);
+        $remoteUrl = 'https://raw.githubusercontent.com/' . self::REPO . '/' . self::BRANCH . '/site/core/Version.php';
 
         $ctx = stream_context_create([
-            'http' => [
-                'timeout' => 10,
-                'header'  => "User-Agent: Beacon/" . Version::CURRENT . "\r\n",
-            ],
-            'ssl' => ['verify_peer' => false, 'verify_peer_name' => false],
+            'http'  => ['timeout' => 10, 'header' => "User-Agent: Beacon-Updater/1.0\r\n"],
+            'ssl'   => ['verify_peer' => false, 'verify_peer_name' => false],
         ]);
 
-        $body = @file_get_contents($url, false, $ctx);
+        $body = @file_get_contents($remoteUrl, false, $ctx);
         if ($body === false) {
-            return ['has_update' => false, 'error' => '无法连接更新服务器'];
+            // 退而求其次，用 GitHub API 获取最新 commit 时间
+            return self::checkViaApi();
         }
 
-        $data = json_decode($body, true);
-        if (!$data || empty($data['latest_version'])) {
-            return ['has_update' => false, 'error' => '更新服务器返回格式异常'];
+        // 解析远程版本号
+        if (preg_match("/const\s+CURRENT\s*=\s*'([^']+)'/", $body, $m)) {
+            $remoteVersion = $m[1];
+        } else {
+            return self::checkViaApi();
         }
 
-        $hasUpdate = Version::hasNewer($data['latest_version']);
+        $localVersion  = Version::CURRENT;
+        $hasUpdate     = version_compare($remoteVersion, $localVersion, '>');
 
         return [
-            'has_update'     => $hasUpdate,
-            'current'        => Version::CURRENT,
-            'latest_version' => $data['latest_version'],
-            'changelog'      => $data['changelog'] ?? '',
-            'download_url'   => $data['download_url'] ?? '',
-            'released_at'    => $data['released_at'] ?? '',
-            'min_php'        => $data['min_php_version'] ?? '7.4',
-            'file_hash'      => $data['file_hash'] ?? '',
+            'has_update'       => $hasUpdate,
+            'current'          => $localVersion,
+            'latest_version'   => $remoteVersion,
+            'changelog'        => '',
+            'download_url'     => 'https://github.com/' . self::REPO . '/archive/refs/heads/' . self::BRANCH . '.zip',
+            'released_at'      => '',
+            'min_php'          => '8.1',
+            'file_hash'        => '',
         ];
     }
 
     /**
-     * 创建当前版本备份
+     * 备用：通过 GitHub API 检查最近是否有提交。
+     */
+    private static function checkViaApi(): array
+    {
+        $apiUrl = 'https://api.github.com/repos/' . self::REPO . '/commits/' . self::BRANCH . '?per_page=1';
+
+        $ctx = stream_context_create([
+            'http'  => ['timeout' => 10, 'header' => "User-Agent: Beacon-Updater/1.0\r\n"],
+            'ssl'   => ['verify_peer' => false, 'verify_peer_name' => false],
+        ]);
+
+        $body = @file_get_contents($apiUrl, false, $ctx);
+        if ($body === false) {
+            return [
+                'has_update' => false,
+                'current'    => Version::CURRENT,
+                'error'      => '无法连接 GitHub，请检查服务器网络。',
+            ];
+        }
+
+        $data = json_decode($body, true);
+        $lastCommitSha = Setting::get('_last_update_commit', '');
+
+        $latestSha = $data['sha'] ?? '';
+        $message   = $data['commit']['message'] ?? '';
+        $date      = $data['commit']['committer']['date'] ?? '';
+
+        if (!$latestSha) {
+            return [
+                'has_update' => false,
+                'current'    => Version::CURRENT,
+                'error'      => 'GitHub API 返回格式异常。',
+            ];
+        }
+
+        $hasUpdate = $latestSha !== $lastCommitSha;
+
+        return [
+            'has_update'       => $hasUpdate,
+            'current'          => Version::CURRENT,
+            'latest_version'   => substr($latestSha, 0, 7),
+            'changelog'        => $hasUpdate ? $message : '',
+            'download_url'     => 'https://github.com/' . self::REPO . '/archive/refs/heads/' . self::BRANCH . '.zip',
+            'released_at'      => $date,
+            'min_php'          => '8.1',
+            'file_hash'        => '',
+        ];
+    }
+
+    // ──────────────────────────────────────────────
+    //  备份
+    // ──────────────────────────────────────────────
+
+    /**
+     * 创建当前版本的备份（仅源码，排除缓存和上传文件）
      */
     static function backup(): string
     {
@@ -66,7 +144,7 @@ class Updater
             throw new \RuntimeException('无法创建备份文件');
         }
 
-        $excludes = ['cache', 'uploads', '.cursor', 'node_modules', '.git'];
+        $excludes = array_merge(self::$protectedPaths, ['.git', '.cursor', 'node_modules']);
         self::addDirToZip($zip, ROOT_PATH, ROOT_PATH, $excludes);
         $zip->close();
 
@@ -81,7 +159,7 @@ class Updater
         foreach ($items as $item) {
             if ($item === '.' || $item === '..') continue;
 
-            $full = $dir . '/' . $item;
+            $full     = $dir . '/' . $item;
             $relative = ltrim(str_replace($root, '', $full), '/');
             $topLevel = explode('/', $relative)[0];
 
@@ -98,48 +176,44 @@ class Updater
         }
     }
 
+    // ──────────────────────────────────────────────
+    //  下载
+    // ──────────────────────────────────────────────
+
     /**
-     * 下载更新包
+     * 从 GitHub 下载仓库 ZIP
      */
-    static function download(string $url, string $expectedHash = ''): string
+    static function download(): string
     {
         self::dirs();
         $tmpFile = self::$cacheDir . '/update-' . time() . '.zip';
 
+        $url = 'https://github.com/' . self::REPO . '/archive/refs/heads/' . self::BRANCH . '.zip';
         $ctx = stream_context_create([
-            'http' => [
+            'http'  => [
                 'timeout' => 300,
-                'header'  => "User-Agent: Beacon/" . Version::CURRENT . "\r\n",
+                'header'  => "User-Agent: Beacon-Updater/1.0\r\n",
             ],
-            'ssl' => ['verify_peer' => false, 'verify_peer_name' => false],
+            'ssl'   => ['verify_peer' => false, 'verify_peer_name' => false],
         ]);
 
         $data = @file_get_contents($url, false, $ctx);
         if ($data === false) {
-            throw new \RuntimeException('下载更新包失败');
+            throw new \RuntimeException('下载更新包失败，请检查服务器网络。');
         }
 
         file_put_contents($tmpFile, $data);
-
-        if ($expectedHash) {
-            if (strpos($expectedHash, ':') !== false) {
-                [$algo, $expect] = explode(':', $expectedHash, 2);
-            } else {
-                $algo = 'sha256';
-                $expect = $expectedHash;
-            }
-            $actual = hash_file($algo, $tmpFile);
-            if ($actual !== $expect) {
-                @unlink($tmpFile);
-                throw new \RuntimeException('更新包校验失败');
-            }
-        }
-
         return $tmpFile;
     }
 
+    // ──────────────────────────────────────────────
+    //  应用更新
+    // ──────────────────────────────────────────────
+
     /**
-     * 应用更新包
+     * 应用更新包。
+     * 只解压 site/ 目录，跳过 protectedPaths。
+     * 如果有新的迁移文件则执行。
      */
     static function apply(string $zipPath): array
     {
@@ -153,35 +227,80 @@ class Updater
         $zip->extractTo($extractDir);
         $zip->close();
 
-        $sourceDir = $extractDir;
-        $manifest = $extractDir . '/update-manifest.json';
-        $manifestData = [];
-        if (is_file($manifest)) {
-            $manifestData = json_decode(file_get_contents($manifest), true) ?: [];
+        // GitHub ZIP 内的顶层目录名：MCSite-Update-master/
+        $entries = @scandir($extractDir);
+        $sourceDir = null;
+        if ($entries) {
+            foreach ($entries as $entry) {
+                if ($entry === '.' || $entry === '..') continue;
+                if (is_dir($extractDir . '/' . $entry)) {
+                    $sourceDir = $extractDir . '/' . $entry . '/site';
+                    break;
+                }
+            }
         }
 
-        $protectedPaths = ['config.php', 'uploads', 'cache', '.cursor'];
-        if (!empty($manifestData['protected'])) {
-            $protectedPaths = array_merge($protectedPaths, $manifestData['protected']);
+        if (!$sourceDir || !is_dir($sourceDir)) {
+            self::removeDir($extractDir);
+            throw new \RuntimeException('更新包结构异常，未找到 site/ 目录。');
         }
 
-        self::copyDir($sourceDir, ROOT_PATH, $protectedPaths);
+        // 复制文件，跳过受保护路径
+        self::copyDir($sourceDir, ROOT_PATH, self::$protectedPaths);
 
+        // 执行新的迁移
         $migrationResults = [];
-        $migDir = $extractDir . '/migrations';
-        if (is_dir($migDir)) {
-            self::copyDir($migDir, ROOT_PATH . '/migrations', []);
+        if (is_dir($sourceDir . '/migrations')) {
+            // 把新迁移文件拷贝过来
+            self::copyDir($sourceDir . '/migrations', ROOT_PATH . '/migrations', []);
+            // 执行待处理迁移
             $migrationResults = Migration::run();
         }
 
+        // 记录本次更新的 commit SHA
+        $latestSha = self::getLatestCommitSha();
+        if ($latestSha) {
+            Setting::set('_last_update_commit', $latestSha);
+        }
+
+        // 清理
         self::removeDir($extractDir);
         @unlink($zipPath);
 
+        // 读取新版本号
+        $newVersion = Version::CURRENT;
+        $versionFile = $sourceDir . '/core/Version.php';
+        if (is_file($versionFile)) {
+            $vc = file_get_contents($versionFile);
+            if (preg_match("/const\s+CURRENT\s*=\s*'([^']+)'/", $vc, $m)) {
+                $newVersion = $m[1];
+            }
+        }
+
         return [
-            'version'    => $manifestData['version'] ?? '未知',
+            'version'    => $newVersion,
             'migrations' => $migrationResults,
         ];
     }
+
+    private static function getLatestCommitSha(): string
+    {
+        $apiUrl = 'https://api.github.com/repos/' . self::REPO . '/commits/' . self::BRANCH . '?per_page=1';
+        $ctx = stream_context_create([
+            'http'  => ['timeout' => 5, 'header' => "User-Agent: Beacon-Updater/1.0\r\n"],
+            'ssl'   => ['verify_peer' => false, 'verify_peer_name' => false],
+        ]);
+        $body = @file_get_contents($apiUrl, false, $ctx);
+        if ($body) {
+            $data = json_decode($body, true);
+            return $data['sha'] ?? '';
+        }
+        return '';
+    }
+
+    // ──────────────────────────────────────────────
+    //  文件操作
+    // ──────────────────────────────────────────────
 
     private static function copyDir(string $src, string $dst, array $protected): void
     {
@@ -191,8 +310,6 @@ class Updater
 
         foreach ($items as $item) {
             if ($item === '.' || $item === '..') continue;
-            if ($item === 'update-manifest.json') continue;
-
             if (in_array($item, $protected, true)) continue;
 
             $srcPath = $src . '/' . $item;
@@ -220,19 +337,20 @@ class Updater
         @rmdir($dir);
     }
 
-    /**
-     * 获取备份列表
-     */
+    // ──────────────────────────────────────────────
+    //  备份列表
+    // ──────────────────────────────────────────────
+
     static function backups(): array
     {
         self::dirs();
         $list = [];
         foreach (glob(self::$backupDir . '/backup-*.zip') as $f) {
             $list[] = [
-                'file'       => basename($f),
-                'size'       => filesize($f),
-                'size_human' => self::formatSize(filesize($f)),
-                'created_at' => date('Y-m-d H:i:s', filemtime($f)),
+                'file'        => basename($f),
+                'size'        => filesize($f),
+                'size_human'  => self::formatSize(filesize($f)),
+                'created_at'  => date('Y-m-d H:i:s', filemtime($f)),
             ];
         }
         usort($list, fn($a, $b) => strcmp($b['created_at'], $a['created_at']));
@@ -257,9 +375,7 @@ class Updater
     static function cleanup(): void
     {
         self::dirs();
-        foreach (glob(self::$cacheDir . '/update-*.zip') as $f) {
-            @unlink($f);
-        }
+        foreach (glob(self::$cacheDir . '/update-*.zip') as $f) @unlink($f);
         foreach (glob(self::$cacheDir . '/extract-*') as $d) {
             if (is_dir($d)) self::removeDir($d);
         }

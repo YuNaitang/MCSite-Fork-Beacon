@@ -23,17 +23,13 @@ if ($method === 'GET' && $sub === 'check') {
     }
 }
 
-// POST /update/apply — 执行更新
+// POST /update/apply — 从 GitHub 拉取最新代码
 if ($method === 'POST' && $sub === 'apply') {
     set_time_limit(300);
 
-    $checkResult = Updater::check();
-    if (!$checkResult['has_update'] || empty($checkResult['download_url'])) {
-        Response::error('没有可用的更新', 400);
-    }
-
     $steps = [];
 
+    // 1. 备份
     try {
         $steps[] = ['step' => 'backup', 'status' => 'running'];
         $backupPath = Updater::backup();
@@ -46,17 +42,16 @@ if ($method === 'POST' && $sub === 'apply') {
         Response::error('备份失败: ' . $e->getMessage(), 500);
     }
 
+    // 2. 从 GitHub 下载
     try {
         $steps[] = ['step' => 'download', 'status' => 'running'];
-        $zipPath = Updater::download(
-            $checkResult['download_url'],
-            $checkResult['file_hash'] ?? ''
-        );
+        $zipPath = Updater::download();
         $steps[count($steps) - 1] = ['step' => 'download', 'status' => 'ok'];
     } catch (\Throwable $e) {
         Response::error('下载失败: ' . $e->getMessage(), 500);
     }
 
+    // 3. 应用更新
     try {
         $steps[] = ['step' => 'install', 'status' => 'running'];
         $result = Updater::apply($zipPath);
@@ -75,7 +70,7 @@ if ($method === 'POST' && $sub === 'apply') {
     Response::success([
         'message' => '更新成功',
         'steps'   => $steps,
-        'version' => $result['version'] ?? $checkResult['latest_version'],
+        'version' => $result['version'] ?? '未知',
     ]);
 }
 
