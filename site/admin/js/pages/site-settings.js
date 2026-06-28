@@ -63,6 +63,9 @@ const SiteSettingsPage = {
                     <el-form-item label="主标题">
                         <el-input v-model="form.hero_title" placeholder="欢迎来到服务器" />
                     </el-form-item>
+                    <el-form-item label="副标题">
+                        <el-input v-model="form.hero_subtitle" placeholder="副标题或服务器口号" />
+                    </el-form-item>
                     <el-form-item label="背景图片">
                         <div style="display:flex;align-items:flex-start;gap:12px;width:100%;">
                             <app-image-upload v-model="form.hero_bg_image" />
@@ -72,22 +75,29 @@ const SiteSettingsPage = {
                 </el-form>
             </div>
 
-            <!-- ──────── C. 各板块标题 ──────── -->
+            <!-- ──────── C. 各板块标题与描述 ──────── -->
             <div class="card-box" v-loading="loading">
-                <h3>各板块标题</h3>
-                <p style="font-size:12px;color:var(--text-muted);margin:-12px 0 16px;">各区域标题文字，留空使用默认值</p>
+                <h3>各板块标题与描述</h3>
+                <p style="font-size:12px;color:var(--text-muted);margin:-12px 0 16px;">各区域标题及描述文字，留空使用默认值</p>
                 <el-form :model="form" label-width="140px" style="max-width: 720px;">
                     <el-form-item label="服务器状态">
-                        <el-input v-model="form.section_servers_title" placeholder="服务器状态" />
+                        <el-input v-model="form.section_servers_title" placeholder="服务器状态" style="margin-bottom:6px;" />
+                        <el-input v-model="form.section_servers_description" type="textarea" :rows="1" placeholder="对各服务器的简要介绍" />
                     </el-form-item>
+                    <el-divider style="margin:12px 0;" />
                     <el-form-item label="服务器图集">
-                        <el-input v-model="form.section_gallery_title" placeholder="服务器图集" />
+                        <el-input v-model="form.section_gallery_title" placeholder="服务器图集" style="margin-bottom:6px;" />
+                        <el-input v-model="form.section_gallery_description" type="textarea" :rows="1" placeholder="展现服务器的精彩瞬间" />
                     </el-form-item>
+                    <el-divider style="margin:12px 0;" />
                     <el-form-item label="服务器动态">
-                        <el-input v-model="form.section_news_title" placeholder="服务器动态" />
+                        <el-input v-model="form.section_news_title" placeholder="服务器动态" style="margin-bottom:6px;" />
+                        <el-input v-model="form.section_news_description" type="textarea" :rows="1" placeholder="了解最新的服务器资讯" />
                     </el-form-item>
+                    <el-divider style="margin:12px 0;" />
                     <el-form-item label="留言板">
-                        <el-input v-model="form.section_comments_title" placeholder="留言板" />
+                        <el-input v-model="form.section_comments_title" placeholder="留言板" style="margin-bottom:6px;" />
+                        <el-input v-model="form.section_comments_description" type="textarea" :rows="1" placeholder="畅所欲言，留下你的想法" />
                     </el-form-item>
                 </el-form>
             </div>
@@ -287,11 +297,13 @@ const SiteSettingsPage = {
             server_address_display: '',
 
             // B. Hero 区域
-            hero_title: '', hero_bg_image: '',
+            hero_title: '', hero_subtitle: '', hero_bg_image: '',
 
-            // C. 各板块标题
-            section_servers_title: '', section_gallery_title: '',
-            section_news_title: '', section_comments_title: '',
+            // C. 各板块标题与描述
+            section_servers_title: '', section_servers_description: '',
+            section_gallery_title: '', section_gallery_description: '',
+            section_news_title: '', section_news_description: '',
+            section_comments_title: '', section_comments_description: '',
 
             // D. 社交与联系方式
             qq_group_name: '', qq_group_link: '',

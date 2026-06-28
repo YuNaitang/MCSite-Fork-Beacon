@@ -56,7 +56,10 @@
       const heroTitle = document.getElementById('hero-title')
       if (heroTitle) heroTitle.textContent = g('hero_title') || siteInfo.site_description || '欢迎来到服务器'
 
-      // hero-subtitle 已在新 HTML 中移除
+      const heroSubtitle = document.getElementById('hero-subtitle')
+      if (heroSubtitle) {
+        heroSubtitle.textContent = g('hero_subtitle') || siteInfo.site_slogan || ''
+      }
 
       const addr = document.getElementById('server-address')
       if (addr) addr.textContent = g('server_address_display')
@@ -140,6 +143,12 @@
       setSectionTitle('section-gallery-title', g('section_gallery_title'), '服务器图集')
       setSectionTitle('section-news-title', g('section_news_title'), '服务器动态')
       setSectionTitle('section-comments-title', g('section_comments_title'), '留言板')
+
+      // 区域描述
+      setText('section-servers-desc', g('section_servers_description'))
+      setText('section-gallery-desc', g('section_gallery_description'))
+      setText('section-news-desc', g('section_news_description'))
+      setText('section-comments-desc', g('section_comments_description'))
 
       // 功能开关
       toggleSection('gallery', features.gallery)
@@ -884,6 +893,11 @@
     const el = document.getElementById(id)
     if (el && value) el.textContent = value
     else if (el && fallback) el.textContent = fallback
+  }
+
+  function setText(id, value) {
+    const el = document.getElementById(id)
+    if (el && value) el.textContent = value
   }
 
   function escapeHtml(str) {
