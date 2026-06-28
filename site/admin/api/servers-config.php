@@ -76,6 +76,18 @@ if ($method === 'POST') {
     ]);
 
     $row = DB::fetch('SELECT * FROM server_configs WHERE id = ?', [$id]);
+    // 更新 server_address_display 为第一个启用的服务器地址
+    $firstDisplayed = DB::fetch(
+        'SELECT host, port, protocol FROM server_configs WHERE is_displayed = 1 ORDER BY display_order ASC, id ASC LIMIT 1'
+    );
+    if ($firstDisplayed) {
+        $defaultPort = ($firstDisplayed['protocol'] ?? 'java') === 'bedrock' ? 19132 : 25565;
+        $addr = $firstDisplayed['host'];
+        if ((int) $firstDisplayed['port'] !== $defaultPort) {
+            $addr .= ':' . $firstDisplayed['port'];
+        }
+        Setting::set('server_address_display', $addr);
+    }
     Response::success($row, '服务器已添加');
 }
 
@@ -124,6 +136,19 @@ if ($method === 'PUT' && $serverId !== null) {
     $cacheFile = ROOT_PATH . '/cache/mc_status_all.json';
     if (is_file($cacheFile)) {
         @unlink($cacheFile);
+    }
+
+    // 更新 server_address_display 为第一个启用的服务器地址
+    $firstDisplayed = DB::fetch(
+        'SELECT host, port, protocol FROM server_configs WHERE is_displayed = 1 ORDER BY display_order ASC, id ASC LIMIT 1'
+    );
+    if ($firstDisplayed) {
+        $defaultPort = ($firstDisplayed['protocol'] ?? 'java') === 'bedrock' ? 19132 : 25565;
+        $addr = $firstDisplayed['host'];
+        if ((int) $firstDisplayed['port'] !== $defaultPort) {
+            $addr .= ':' . $firstDisplayed['port'];
+        }
+        Setting::set('server_address_display', $addr);
     }
 
     Response::success($row, '服务器配置已保存');

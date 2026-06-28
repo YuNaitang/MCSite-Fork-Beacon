@@ -45,6 +45,17 @@ try {
     $servers = [];
 }
 
+// 如果没有设置 server_address_display，从 servers 列表推断
+if (empty($allSettings['server_address_display']) && !empty($servers)) {
+    $first = $servers[0];
+    $defaultPort = ($first['protocol'] ?? 'java') === 'bedrock' ? 19132 : 25565;
+    $displayAddr = ($first['host'] ?? '');
+    if (!empty($first['port']) && (int) $first['port'] !== $defaultPort) {
+        $displayAddr .= ':' . $first['port'];
+    }
+    $allSettings['server_address_display'] = $displayAddr;
+}
+
 Response::success([
     'settings'          => $allSettings,
     'features'          => Setting::allFeatures(),
