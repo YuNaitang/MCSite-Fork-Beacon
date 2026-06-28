@@ -9,6 +9,11 @@ class Updater
 {
     const REPO   = 'YuNaitang/MCSite-Update';
     const BRANCH = 'master';
+    // 国内镜像 CDN — 若 GitHub 直连不通则使用镜像
+    // GitHub 官方 archive URL
+    const ARCHIVE_URL = 'https://github.com/' . self::REPO . '/archive/refs/heads/' . self::BRANCH . '.zip';
+    // 镜像备用（如 ghproxy.com）
+    const MIRROR_URL  = ''; // 留空则不用镜像
 
     private static string $cacheDir  = '';
     private static string $backupDir = '';
@@ -188,18 +193,32 @@ class Updater
         self::dirs();
         $tmpFile = self::$cacheDir . '/update-' . time() . '.zip';
 
-        $url = 'https://github.com/' . self::REPO . '/archive/refs/heads/' . self::BRANCH . '.zip';
-        $ctx = stream_context_create([
-            'http'  => [
-                'timeout' => 300,
-                'header'  => "User-Agent: Beacon-Updater/1.0\r\n",
-            ],
-            'ssl'   => ['verify_peer' => false, 'verify_peer_name' => false],
-        ]);
+        // 优先尝试直连 GitHub，若失败且有镜像则用镜像
+        $urls = [self::ARCHIVE_URL];
+        if (self::MIRROR_URL) {
+            $urls[] = self::MIRROR_URL;
+        }
 
-        $data = @file_get_contents($url, false, $ctx);
-        if ($data === false) {
-            throw new \RuntimeException('下载更新包失败，请检查服务器网络。');
+        $success = false;
+        $data = false;
+        foreach ($urls as $url) {
+            $ctx = stream_context_create([
+                'http'  => [
+                    'timeout' => 300,
+                    'header'  => "User-Agent: Beacon-Updater/1.0\r\n",
+                ],
+                'ssl'   => ['verify_peer' => false, 'verify_peer_name' => false],
+            ]);
+
+            $data = @file_get_contents($url, false, $ctx);
+            if ($data !== false) {
+                $success = true;
+                break;
+            }
+        }
+
+        if (!$success) {
+            throw new \RuntimeException('下载更新包失败，请检查服务器网络（无法连接 GitHub）。');
         }
 
         file_put_contents($tmpFile, $data);
