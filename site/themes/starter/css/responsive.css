@@ -216,12 +216,19 @@
   }
 
   .hero-stats {
-    flex-direction: column;
-    gap: 12px;
+    gap: 0;
+    justify-content: center;
+  }
+
+  .hero-stat {
+    padding: 0 12px;
   }
 
   .hero-stat-divider {
-    display: none;
+    width: 1px;
+    height: 32px;
+    background: var(--hero-divider);
+    display: block;
   }
 
   .hero-stat-value {
