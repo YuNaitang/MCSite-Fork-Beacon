@@ -349,7 +349,7 @@ class Upload
             ];
         }, $rows);
 
-        return ['items' => $items, 'total' => $total, 'page' => $page, 'per_page' => $perPage];
+        return ['items' => $items, 'total' => $total, 'current_page' => $page, 'last_page' => (int) ceil($total / max($perPage, 1)), 'per_page' => $perPage];
     }
 
     /**
@@ -371,8 +371,8 @@ class Upload
 
         foreach ($iterator as $file) {
             if (!$file->isFile()) continue;
-            $relPath = str_replace($base . '/', '', $file->getPathname());
-            $relPath = str_replace('\\', '/', $relPath);
+            $relPath = str_replace('\\', '/', $file->getPathname());
+            $relPath = str_replace($base . '/', '', $relPath);
             // 跳过 thumbs、.orig、.webp（它们会随原文件一起展示）
             if (strpos($relPath, '/thumbs/') !== false) continue;
             if (str_ends_with($relPath, '.orig')) continue;
@@ -403,7 +403,7 @@ class Upload
         $offset = ($page - 1) * $perPage;
         $items = array_slice($files, $offset, $perPage);
 
-        return ['items' => $items, 'total' => $total, 'page' => $page, 'per_page' => $perPage];
+        return ['items' => $items, 'total' => $total, 'current_page' => $page, 'last_page' => (int) ceil($total / max($perPage, 1)), 'per_page' => $perPage];
     }
 
     /**
